@@ -1,0 +1,373 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Убираем внутренние отступы */
+ul[class],
+ol[class] {
+    padding: 0;
+}
+
+/* Убираем внешние отступы */
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul[class],
+ol[class],
+li,
+figure,
+figcaption,
+blockquote,
+dl,
+dd {
+    margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+// Colors
+$color-red: hsl(14, 86%, 42%);
+$color-red-hover: hsl(14, 86%, 32%);
+$color-green: hsl(159, 69%, 38%);
+
+// Rose color palette
+$color-rose-50: hsl(20, 50%, 98%);
+$color-rose-100: hsl(13, 31%, 94%);
+$color-rose-300: hsl(14, 25%, 72%);
+$color-rose-400: hsl(7, 20%, 60%);
+$color-rose-500: hsl(12, 20%, 44%);
+$color-rose-900: hsl(14, 65%, 9%);
+
+$font-size-product-names: 16px;
+$font-size-primary: 14px;
+
+$font-family-primary: 'Red Hat Text', sans-serif;
+$font-weight-regular: 400;
+$font-weight-semi-bold: 600;
+$font-weight-bold: 700;
+
+$gap: 20px;
+
+body {
+    font-family: $font-family-primary;
+}
+
+.main-section {
+    display: flex;
+    flex-direction: row;
+    border-radius: 16px;
+    background-color: $color-rose-50;
+    max-width: 1440px;
+    margin: 0 240px;
+    position: relative;
+}
+
+.main-header {
+    font-size: 40px;
+    font-weight: $font-weight-bold;
+    color: $color-rose-900;
+    padding: 0 0 30px 100px;
+}
+
+.header-and-cart {
+    display: flex;
+}
+
+.cart-section {
+    background-color: white;
+    border-radius: 8px;
+    min-width: 390px;
+    max-height: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; // Изменено с center на flex-start
+    align-items: center;
+    position: sticky;
+    top: 20px; // Отступ сверху, когда элемент становится sticky
+    align-self: flex-start; // Важно для правильного выравнивания
+    height: 100vh; // Или другое подходящее значение
+    overflow-y: auto;
+
+    .cart-header {
+        margin: 25px auto 45px 25px;
+        color: $color-red;
+        font-size: 24px;
+        font-weight: $font-weight-bold;
+    }
+
+    .will-appear-here {
+        margin: 15px 0 30px 0;
+        font-size: $font-size-primary;
+        color: $color-rose-500;
+        font-weight: $font-weight-semi-bold;
+    }
+
+    .cart-items-container {
+        width: 100%;
+        padding: 0 20px;
+
+        .cart-item {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            border-bottom: 1px solid $color-rose-100;
+
+            .remove-icon {
+                margin: 15px 0;
+                display: flex;
+                align-items: center;
+
+                .remove-btn {
+                    cursor: pointer;
+                    all: unset;
+
+                    img {
+                        width: 14px !important;
+                        height: 14px !important;
+                        border-radius: 50%;
+                        border: 1px solid $color-rose-300;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                        padding: 1px;
+
+
+                        &:hover {
+                            filter: brightness(0) saturate(100%) invert(58%) sepia(1%) saturate(3039%) hue-rotate(328deg) brightness(85%) contrast(74%);
+                        }
+                    }
+                }
+            }
+
+            .item-quantity-price {
+                margin: 15px 0;
+
+                .item-name {
+                    color: $color-rose-900;
+                    font-weight: $font-weight-semi-bold;
+                    font-size: $font-size-primary;
+                    margin-bottom: 10px;
+                }
+
+                .quantity {
+                    color: $color-red;
+                    font-weight: $font-weight-semi-bold;
+                    font-size: $font-size-primary;
+                }
+
+                .price {
+                    color: $color-rose-300;
+                    margin: 0 10px;
+                    font-size: $font-size-primary;
+                }
+
+                .total {
+                    color: $color-rose-500;
+                    font-weight: $font-weight-semi-bold;
+                    font-size: $font-size-primary;
+                }
+            }
+        }
+
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            color: $color-rose-900;
+            font-size: $font-size-primary;
+
+            .order-total-name {
+                display: flex;
+                align-items: center;
+            }
+
+            .order-total-number {
+                font-size: 24px;
+                font-weight: $font-weight-bold;
+            }
+        }
+
+        .carbon-neutral {
+            display: flex;
+            background-color: $color-rose-100;
+            color: $color-rose-900;
+            justify-content: center;
+            padding: 15px;
+            margin: 15px;
+            font-size: $font-size-primary;
+            border-radius: 8px;
+
+            p {
+                span {
+                    font-weight: $font-weight-semi-bold;
+                }
+            }
+
+        }
+
+        .confirm-order-btn {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            
+
+            button {
+                cursor: pointer;
+                background-color: $color-red;
+                color: white;
+                font-family: $font-family-primary;
+                border-radius: 32px;
+                border: 1px $color-rose-300 solid;
+                font-size: $font-size-product-names;
+                width: 100%;
+                padding: 15px;
+                font-weight: $font-weight-semi-bold;
+                transition: all 0.2s ease;
+
+                &:hover {
+                    background-color: $color-red-hover;
+                }
+
+            }
+        }
+    }
+}
+
+.menu-items {
+
+    display: grid;
+    grid-template-columns: repeat(3, 250px);
+    gap: $gap;
+    margin-bottom: 30px;
+    padding: 0 40px 0 100px;
+
+    .menu-item {
+        display: flex;
+        flex-direction: column;
+
+
+        .image-and-button {
+
+            position: relative;
+            padding-bottom: 30px;
+
+
+            .add-to-cart {
+                position: absolute;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                left: 50%;
+                transform: translateX(-50%);
+                top: 220px;
+                height: 45px;
+                border-radius: 32px;
+                width: 65%;
+                font-family: $font-family-primary;
+                font-weight: $font-weight-semi-bold;
+                font-size: $font-size-primary;
+                border: 1px $color-rose-300 solid;
+                background-color: white;
+                color: $color-rose-900;
+
+                img {
+                    width: 15%;
+                    margin-right: 5px;
+                }
+
+                &:hover {
+                    cursor: pointer;
+                    border-color: $color-red;
+                    color: $color-red;
+                    transition: all 0.1s ease-in-out;
+                }
+
+            }
+
+            img {
+                width: 100%;
+                border-radius: 8px;
+            }
+        }
+
+        h3 {
+            font-size: $font-size-primary;
+            color: $color-rose-300;
+        }
+
+        .item-name {
+            font-weight: $font-weight-semi-bold;
+            font-size: $font-size-product-names;
+            margin: 6px 0;
+        }
+
+        .item-price {
+            color: $color-red;
+            font-weight: $font-weight-semi-bold;
+        }
+
+    }
+}
+
+.add-to-cart-active {
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 220px;
+    height: 45px;
+    border-radius: 32px;
+    width: 65%;
+    font-family: $font-family-primary;
+    font-weight: $font-weight-semi-bold;
+    font-size: $font-size-primary;
+    border: 1px $color-rose-300 solid;
+    background-color: $color-red;
+    color: white;
+    padding: 0 15px;
+
+    p {
+        margin: 0 10px;
+        font-weight: $font-weight-bold;
+    }
+
+    .quantity-btn {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: $color-red;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        img {
+            width: 12px !important;
+            height: 12px !important;
+        }
+
+        &:hover {
+            background-color: white;
+
+            img {
+                filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
+            }
+        }
+    }
+}
