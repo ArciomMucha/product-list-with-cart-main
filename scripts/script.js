@@ -36,7 +36,11 @@ function createDessertItem(dessert) {
 
     item.innerHTML = `
         <div class="image-and-button">
-            <img src="${dessert.image.desktop}" alt="${dessert.name}">
+            <picture>
+                <source media="(max-width: 768px)" srcset="${dessert.image.mobile}">
+                <source media="(min-width: 769px)" srcset="${dessert.image.desktop}">
+                <img src="${dessert.image.desktop}" alt="${dessert.name}">
+            </picture>
             <button class="add-to-cart" data-id="${dessertId}" data-dessert='${JSON.stringify(dessert)}'>
                 <img src="assets/images/icon-add-to-cart.svg" alt="Add to cart">
                 Add to Cart
@@ -70,6 +74,7 @@ function addToCart(dessertId, dessert) {
             name: dessert.name,
             price: dessert.price,
             quantity: 1,
+            thumb: dessert.image.thumbnail,
             total: dessert.price
         });
     }
@@ -85,24 +90,18 @@ function updateCartButton(dessertId, quantity) {
     if (!button) return;
 
     if (quantity > 0) {
-        // Keep the data-id attribute when changing class
         const wasInactive = button.className === "add-to-cart";
         button.className = "add-to-cart-active";
         button.setAttribute('data-id', dessertId);
 
-        // Проверяем, есть ли уже элементы управления количеством
         let quantityText = button.querySelector('p');
         if (!quantityText) {
-            // Only clone and replace if transitioning from inactive to active
             if (wasInactive) {
-                // Remove all existing event listeners by cloning the button
+                // Создаем новую кнопку и заменяем старую
                 const newButton = button.cloneNode(true);
                 button.parentNode.replaceChild(newButton, button);
 
-                // Update reference to the new button
                 const activeButton = document.querySelector(`[data-id="${dessertId}"]`);
-
-                // Если элементов нет, создаем их
                 activeButton.innerHTML = `
                     <div class="quantity-btn decrement-btn">
                         <img src="assets/images/icon-decrement-quantity.svg" alt="decrement">
@@ -113,19 +112,28 @@ function updateCartButton(dessertId, quantity) {
                     </div>
                 `;
 
-                // Добавляем обработчики только для кнопок + и -
-                activeButton.querySelector('.decrement-btn').addEventListener('click', (e) => {
+                // Удаляем все старые обработчики перед добавлением новых
+                const decrementBtn = activeButton.querySelector('.decrement-btn');
+                const incrementBtn = activeButton.querySelector('.increment-btn');
+
+                // Клонируем элементы, чтобы сбросить обработчики
+                const newDecrement = decrementBtn.cloneNode(true);
+                const newIncrement = incrementBtn.cloneNode(true);
+
+                decrementBtn.replaceWith(newDecrement);
+                incrementBtn.replaceWith(newIncrement);
+
+                newDecrement.addEventListener('click', (e) => {
                     e.stopPropagation();
                     decrementQuantity(dessertId);
                 });
 
-                activeButton.querySelector('.increment-btn').addEventListener('click', (e) => {
+                newIncrement.addEventListener('click', (e) => {
                     e.stopPropagation();
                     incrementQuantity(dessertId);
                 });
             }
         } else {
-            // Если элементы уже есть, просто обновляем количество
             quantityText.textContent = quantity;
         }
     } else {
@@ -137,10 +145,12 @@ function updateCartButton(dessertId, quantity) {
             Add to Cart
         `;
 
-        // Восстанавливаем исходный обработчик событий
-        button.addEventListener('click', () => {
-            // Get the original dessert data from the data attribute
-            const dessertData = JSON.parse(button.getAttribute('data-dessert'));
+        // Удаляем все старые обработчики перед добавлением нового
+        const newButton = button.cloneNode(true);
+        button.parentNode.replaceChild(newButton, button);
+
+        newButton.addEventListener('click', () => {
+            const dessertData = JSON.parse(newButton.getAttribute('data-dessert'));
             addToCart(dessertId, dessertData);
         });
     }
@@ -211,6 +221,72 @@ async function displayDesserts() {
     console.log(desserts);
 }
 
+function displayModal() {
+    const modal = document.getElementById('modalWindow');
+    const overlay = document.getElementById('modalOverlay');
+
+    // Не показываем модальное окно, если корзина пуста
+    if (cartItems.length === 0) {
+        modal.style.display = 'none';
+        overlay.style.display = 'none';
+        return;
+    }
+
+    let cartItemsHTML = '';
+
+    cartItems.forEach(item => {
+        cartItemsHTML += `
+            <div class="cart-item" data-id="${item.id}">
+                <div class="item-image">
+                    <img src="${item.thumb}" alt="">
+                </div>
+                <div class="item-quantity-price">
+                    <p class="item-name">${item.name}</p>
+                    <span class="quantity">${item.quantity}x</span>
+                    <span class="price">@$${item.price.toFixed(2)}</span>
+                </div>
+                <div class="total">$${(item.price * item.quantity).toFixed(2)}</div>
+            </div>
+        `;
+    });
+
+    modal.innerHTML = `
+        <img class="confirmed-icon" src="assets/images/icon-order-confirmed.svg" alt="">
+        <h1 class="main-header">Order Confirmed</h1>
+        <p class="enjoy-text">We hope you enjoy your food!</p>
+        <div class="cart-items-container">
+            <div class="items-and-total">
+                ${cartItemsHTML}
+                <div class="order-total">
+                    <div class="order-total-name">
+                        <p>Order Total</p>
+                    </div>
+                    <div class="order-total-number">
+                        <p>$${totalPrice.toFixed(2)}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="confirm-order-btn"><button id="startNewOrderBtn">Start New Order</button></div>
+        </div>
+    `;
+
+    // Показываем модальное окно и оверлей
+    modal.style.display = 'block';
+    overlay.style.display = 'block';
+
+    // Добавляем обработчик для кнопки "Start New Order"
+    const startNewOrderBtn = document.getElementById('startNewOrderBtn');
+    if (startNewOrderBtn) {
+        startNewOrderBtn.addEventListener('click', resetCart);
+    }
+
+    // Добавляем обработчик для закрытия по клику на оверлей
+    overlay.addEventListener('click', () => {
+        modal.style.display = 'none';
+        overlay.style.display = 'none';
+    });
+}
+
 function displayCart() {
     const cart = document.getElementById('cartSection');
     console.log("Total quantity: ", totalQuantity);
@@ -259,9 +335,17 @@ function displayCart() {
                     <img src="assets/images/icon-carbon-neutral.svg" alt="">
                     <p>This is a <span>carbon-neutral</span> delivery</p>
                 </div>
-                <div class="confirm-order-btn"><button>Confirm Order</button></div>
+                <div class="confirm-order-btn" id="confirmOrderBtn"><button>Confirm Order</button></div>
             </div>
         `;
+
+        // Добавляем обработчик для кнопки подтверждения заказа
+        const confirmOrderBtn = document.getElementById('confirmOrderBtn');
+        if (confirmOrderBtn) {
+            confirmOrderBtn.addEventListener('click', () => {
+                displayModal();
+            });
+        }
 
         // Делегирование событий для кнопок удаления
         cart.addEventListener('click', (e) => {
@@ -275,7 +359,8 @@ function displayCart() {
 }
 
 function removeFromCart(dessertId) {
-    console.log("вызвалась функция " + removeFromCart.name);
+    console.log("Removing item with ID:", dessertId);
+
     // Удаляем элемент из корзины
     cartItems = cartItems.filter(item => item.id !== dessertId);
 
@@ -283,10 +368,57 @@ function removeFromCart(dessertId) {
     totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
     totalPrice = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 
-    // Обновляем кнопку добавления в корзину (возвращаем в исходное состояние)
-    updateCartButton(dessertId, 0);
+    // Полностью сбрасываем кнопку
+    const button = document.querySelector(`[data-id="${dessertId}"]`);
+    if (button) {
+        const newButton = button.cloneNode(true);
+        button.parentNode.replaceChild(newButton, button);
+        newButton.className = "add-to-cart";
+        newButton.innerHTML = `
+            <img src="assets/images/icon-add-to-cart.svg" alt="Add to cart">
+            Add to Cart
+        `;
+        newButton.addEventListener('click', () => {
+            const dessertData = JSON.parse(newButton.getAttribute('data-dessert'));
+            addToCart(dessertId, dessertData);
+        });
+    }
 
     // Перерисовываем корзину
+    displayCart();
+}
+
+function resetCart() {
+    // Очищаем корзину
+    cartItems = [];
+    totalQuantity = 0;
+    totalPrice = 0;
+
+    // Скрываем модальное окно
+    const modal = document.getElementById('modalWindow');
+    const overlay = document.getElementById('modalOverlay');
+    modal.style.display = 'none';
+    overlay.style.display = 'none';
+
+    // Сбрасываем все кнопки "Add to Cart"
+    const addToCartButtons = document.querySelectorAll('.add-to-cart-active');
+    addToCartButtons.forEach(button => {
+        const dessertId = button.getAttribute('data-id');
+        const dessertData = JSON.parse(button.getAttribute('data-dessert'));
+
+        const newButton = button.cloneNode(true);
+        button.parentNode.replaceChild(newButton, button);
+        newButton.className = "add-to-cart";
+        newButton.innerHTML = `
+            <img src="assets/images/icon-add-to-cart.svg" alt="Add to cart">
+            Add to Cart
+        `;
+        newButton.addEventListener('click', () => {
+            addToCart(dessertId, dessertData);
+        });
+    });
+
+    // Обновляем отображение корзины
     displayCart();
 }
 
