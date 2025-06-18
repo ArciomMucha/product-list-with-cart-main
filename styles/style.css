@@ -226,10 +226,14 @@ body {
 }
 .menu-items .menu-item .image-and-button .dessert-image {
   display: block;
+  box-sizing: content-box;
   width: 100%;
   position: relative;
   height: auto;
   border-radius: 8px;
+}
+.menu-items .menu-item .image-and-button .dessert-image.active-border {
+  box-shadow: 0 0 0 2px hsl(14, 86%, 42%);
 }
 .menu-items .menu-item .image-and-button .add-to-cart {
   position: absolute;

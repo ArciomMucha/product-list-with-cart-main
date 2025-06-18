@@ -89,7 +89,10 @@ function updateCartButton(dessertId, quantity) {
     const button = document.querySelector(`[data-id="${dessertId}"]`);
     if (!button) return;
 
+    const dessertImage = button.closest('.image-and-button').querySelector('.dessert-image');
+
     if (quantity > 0) {
+        dessertImage.classList.add('active-border');
         const wasInactive = button.className === "add-to-cart";
         button.className = "add-to-cart-active";
         button.setAttribute('data-id', dessertId);
@@ -137,7 +140,7 @@ function updateCartButton(dessertId, quantity) {
             quantityText.textContent = quantity;
         }
     } else {
-        // Возвращаем кнопку в исходное состояние
+        dessertImage.classList.remove('active-border');
         button.className = "add-to-cart";
         button.setAttribute('data-id', dessertId);
         button.innerHTML = `
@@ -416,6 +419,10 @@ function resetCart() {
         newButton.addEventListener('click', () => {
             addToCart(dessertId, dessertData);
         });
+    });
+
+    document.querySelectorAll('.dessert-image').forEach(img => {
+        img.classList.remove('active-border');
     });
 
     // Обновляем отображение корзины

@@ -277,11 +277,16 @@ body {
 
 
             .dessert-image {
-                display: block; // Убираем лишнее пространство под изображением
+                display: block; 
+                box-sizing: content-box;
                 width: 100%;
                 position: relative;
                 height: auto;
                 border-radius: 8px;
+
+                &.active-border {
+                    box-shadow: 0 0 0 2px $color-red;
+                }
             }
 
             .add-to-cart {
