@@ -277,7 +277,7 @@ body {
 
 
             .dessert-image {
-                display: block; 
+                display: block;
                 box-sizing: content-box;
                 width: 100%;
                 position: relative;
@@ -552,4 +552,52 @@ body {
     }
 
 
+}
+
+.floating-cart-btn {
+    display: none;
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    width: 56px;
+    height: 56px;
+    background-color: $color-red;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background-color: $color-red-hover;
+        transform: translateY(-3px);
+    }
+
+    img {
+        width: 24px;
+        height: 24px;
+        filter: brightness(0) invert(1);
+    }
+
+    .cart-counter {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background-color: white;
+        color: $color-red;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 12px;
+        font-weight: $font-weight-bold;
+    }
+
+    @media (max-width: 768px) {
+        display: flex;
+    }
 }

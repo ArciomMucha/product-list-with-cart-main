@@ -2,6 +2,29 @@ let cartItems = [];
 let totalQuantity = 0;
 let totalPrice = 0;
 
+// В начале файла script.js, после объявления переменных
+const floatingCartBtn = document.getElementById('floatingCartBtn');
+const cartCounter = document.getElementById('cartCounter');
+
+
+function updateFloatingCart() {
+    const cartCounter = document.getElementById('cartCounter');
+    const floatingCartBtn = document.getElementById('floatingCartBtn');
+
+    if (cartCounter && floatingCartBtn) {
+        cartCounter.textContent = totalQuantity;
+
+        if (totalQuantity > 0) {
+            floatingCartBtn.classList.add('active');
+        } else {
+            floatingCartBtn.classList.remove('active');
+        }
+    }
+}
+
+
+
+
 //dessers initilization
 async function loadDesserts() {
     try {
@@ -17,6 +40,8 @@ async function loadDesserts() {
         return [];
     }
 }
+
+
 
 //manipulating with HTML to add desserts
 function createDessertItem(dessert) {
@@ -80,9 +105,11 @@ function addToCart(dessertId, dessert) {
     }
 
     updateCartButton(dessertId, currentQuantity);
+
     console.log(cartItems);
     console.log("Current quantity of " + dessertId + ": " + currentQuantity);
     console.log("Current total price of " + dessertId + ": " + currentTotal);
+    updateFloatingCart();
 }
 
 function updateCartButton(dessertId, quantity) {
@@ -161,6 +188,7 @@ function updateCartButton(dessertId, quantity) {
     totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
     totalPrice = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
     displayCart();
+    updateFloatingCart();
 }
 
 
@@ -291,6 +319,7 @@ function displayModal() {
 }
 
 function displayCart() {
+
     const cart = document.getElementById('cartSection');
     console.log("Total quantity: ", totalQuantity);
     console.log("Total price: " + totalPrice + " $");
@@ -359,6 +388,7 @@ function displayCart() {
             }
         });
     }
+
 }
 
 function removeFromCart(dessertId) {
@@ -389,6 +419,7 @@ function removeFromCart(dessertId) {
 
     // Перерисовываем корзину
     displayCart();
+    updateFloatingCart();
 }
 
 function resetCart() {
@@ -427,8 +458,24 @@ function resetCart() {
 
     // Обновляем отображение корзины
     displayCart();
+    updateFloatingCart();
 }
 
 
-document.addEventListener('DOMContentLoaded', displayDesserts);
-document.addEventListener('DOMContentLoaded', displayCart);
+document.addEventListener('DOMContentLoaded', function () {
+    displayDesserts();
+    displayCart();
+
+    // Инициализация плавающей кнопки
+    const floatingCartBtn = document.getElementById('floatingCartBtn');
+    const cartCounter = document.getElementById('cartCounter');
+
+    if (floatingCartBtn && cartCounter) {
+        floatingCartBtn.addEventListener('click', () => {
+            const cartSection = document.getElementById('cartSection');
+            if (cartSection) {
+                cartSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    }
+});
