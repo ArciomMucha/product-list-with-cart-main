@@ -39,7 +39,7 @@ function createDessertItem(dessert) {
             <picture>
                 <source media="(max-width: 768px)" srcset="${dessert.image.mobile}">
                 <source media="(min-width: 769px)" srcset="${dessert.image.desktop}">
-                <img src="${dessert.image.desktop}" alt="${dessert.name}">
+                <img src="${dessert.image.desktop}" class="dessert-image" alt="${dessert.name}">
             </picture>
             <button class="add-to-cart" data-id="${dessertId}" data-dessert='${JSON.stringify(dessert)}'>
                 <img src="assets/images/icon-add-to-cart.svg" alt="Add to cart">
